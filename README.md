@@ -4,6 +4,18 @@ End-to-end retail data pipeline on Databricks: raw CSV ingestion → Bronze / Si
 
 The focus is on **data integrity**: every row is accounted for from the source file to the final star schema, invalid rows are quarantined with a reason, and each run is checked by 12 automated validation tests.
 
+![SmartRetail pipeline](screenshots/SmartRetail_Pipeline_Architecture.png)
+
+## Dashboard
+
+| Executive Summary | Sales Performance |
+|---|---|
+| ![Executive Summary](screenshots/dashboard_executive.png) | ![Sales Performance](screenshots/dashboard_sales.png) |
+| **Inventory & Forecast** | **Data Quality** |
+| ![Inventory & Forecast](screenshots/dashboard_inventory.png) | ![Data Quality](screenshots/dashboard_data_quality.png) |
+
+Key findings (2023): net revenue $245.9M, down 1.0% on 2022; promotions drive about 50% of revenue; the demand forecast is 93.9% accurate but runs consistently above actual sales; prices sit within a few cents of competitors.
+
 ## Architecture
 
 ```
@@ -60,7 +72,7 @@ Columns: date, store ID, product ID, category, region, inventory level, units so
 11. No missing days in the date range
 12. Units sold never exceed inventory level
 
-**Expected results for this dataset:** 73,100 rows at every layer, 0 rejected rows, 9,975,582 units sold, about $494,971,375 net revenue.
+**Results:** all 12 checks pass. 73,100 rows at every layer, 0 rejected rows, 9,975,582 units sold, and $494,971,396.22 net revenue reconciled exactly from Silver to Fact.
 
 ## Data-quality findings
 
@@ -80,7 +92,7 @@ Profiling found issues that a simple load would hide:
 
 ## Power BI
 
-The semantic model uses `fact_store_product_daily` with relationships to `dim_date` (`date_key`), `dim_store` (`store_id`) and `dim_product` (`product_id`), all many-to-one with single-direction filtering. See `powerbi/` for the report and `screenshots/` for the dashboard.
+The semantic model uses `fact_store_product_daily` with relationships to `dim_date` (`date_key`), `dim_store` (`store_id`) and `dim_product` (`product_id`), all many-to-one with single-direction filtering. The report has four pages: Executive Summary, Sales Performance, Inventory & Forecast, and Data Quality (validation results). See `powerbi/SmartRetail_Dashboard.pbix` for the report and `powerbi/dax_measures.md` for every DAX measure.
 
 ## Tools
 
